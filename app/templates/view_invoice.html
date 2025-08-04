@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/view_invoice.css') }}" rel="stylesheet">
+
+<!-- Invoice Header -->
+<div class="invoice-header">
+    <div class="invoice-title">
+        <i class="fas fa-file-invoice-dollar"></i>
+        Invoice #{{ invoice.id }}
+    </div>
+    <p class="invoice-subtitle">Professional invoice details and line items</p>
+</div>
+
+<!-- Invoice Content -->
+<div class="invoice-content">
+    <!-- Invoice Information Grid -->
+    <div class="invoice-info-grid">
+        <!-- Client Information -->
+        <div class="info-card">
+            <h4>
+                <i class="fas fa-user"></i>
+                Client Information
+            </h4>
+            <div class="info-item">
+                <div class="client-info">
+                    <div class="client-avatar">
+                        {{ invoice.client.name[0].upper() if invoice.client.name else 'C' }}
+                    </div>
+                    <div class="client-details">
+                        <h5>{{ invoice.client.name }}</h5>
+                        {% if invoice.client.company %}
+                            <p>{{ invoice.client.company }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice Details -->
+        <div class="info-card">
+            <h4>
+                <i class="fas fa-info-circle"></i>
+                Invoice Details
+            </h4>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Issue Date:
+                </div>
+                <div class="info-value">{{ invoice.issue_date.strftime('%B %d, %Y') }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="fas fa-calendar-check"></i>
+                    Due Date:
+                </div>
+                <div class="info-value">{{ invoice.due_date.strftime('%B %d, %Y') }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="fas fa-flag"></i>
+                    Status:
+                </div>
+                <div class="info-value">
+                    {% if invoice.status == 'paid' %}
+                        <span class="status-badge status-paid">
+                            <i class="fas fa-check-circle"></i>
+                            Paid
+                        </span>
+                    {% elif invoice.due_date < current_time().date() %}
+                        <span class="status-badge status-overdue">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Overdue
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-unpaid">
+                            <i class="fas fa-clock"></i>
+                            Unpaid
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Line Items Section -->
+    <div class="line-items-section">
+        <h4 class="section-title">
+            <i class="fas fa-list"></i>
+            Line Items
+        </h4>
+        
+        <div class="line-items-table-container">
+            <table class="line-items-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <i class="fas fa-align-left me-2"></i>
+                            Description
+                        </th>
+                        <th style="text-align: center;">
+                            <i class="fas fa-hashtag me-2"></i>
+                            Qty
+                        </th>
+                        <th style="text-align: right;">
+                            <i class="fas fa-dollar-sign me-2"></i>
+                            Unit Price
+                        </th>
+                        <th style="text-align: right;">
+                            <i class="fas fa-calculator me-2"></i>
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in invoice.line_items %}
+                    <tr>
+                        <td class="description-cell">{{ item.description }}</td>
+                        <td class="quantity-cell">{{ item.quantity }}</td>
+                        <td class="price-cell">${{ '{:,.2f}'.format(item.unit_price) }}</td>
+                        <td class="total-cell">${{ '{:,.2f}'.format(item.total) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Invoice Total -->
+    <div class="invoice-total">
+        <div class="total-label">Total Amount:</div>
+        <div class="total-amount">
+            <i class="fas fa-dollar-sign"></i>
+            {{ '{:,.2f}'.format(invoice.total_amount) }}
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+ 
+<div class="action-buttons">
+    
+    <a href="{{ url_for('invoices.list_invoices') }}" class="btn-custom btn-secondary-custom">
+        <i class="fas fa-arrow-left"></i>
+        Back to Invoices
+    </a>
+
+    <a href="{{ url_for('invoices.download_pdf', invoice_id=invoice.id) }}" class="btn-custom btn-primary-custom">
+        <i class="fas fa-download"></i>
+        Download PDF
+    </a>
+
+    <form action="{{ url_for('invoices.email_invoice', invoice_id=invoice.id) }}" method="post" style="display:inline;">
+        <button type="submit" class="btn-custom btn-info-custom">
+            <i class="fas fa-envelope"></i>
+            Email Invoice
+        </button>
+    </form>
+</div>
+<script src="{{ url_for('static', filename='js/view_invoice.js') }}"></script>
+
+{% endblock %}

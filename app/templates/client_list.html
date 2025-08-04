@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block content %}
+<link href="{{ url_for('static', filename='css/client_list.css') }}" rel="stylesheet">
+
+<div class="clients-header">
+    <div class="clients-title">
+        <i class="fas fa-users"></i> Your Clients
+    </div>
+    <p class="clients-subtitle">Manage your client relationships and contact information</p>
+</div>
+
+<div class="add-client-section">
+    <div>
+        <h4>Client Management</h4>
+        <p>Keep track of all your clients and their contact information in one place</p>
+    </div>
+    <a href="{{ url_for('clients.add_client') }}" class="btn-add-client">
+        <i class="fas fa-user-plus"></i> Add New Client
+    </a>
+</div>
+
+{% if clients %}
+<div class="clients-cards-container">
+    {% for client in clients %}
+    <div class="client-card">
+        <div class="client-card-header">
+            <div class="client-avatar">
+                {{ client.name[0].upper() if client.name else 'C' }}
+            </div>
+            <div class="client-info">
+                <div class="client-name">
+                    {{ client.name or 'Unnamed Client' }}
+                </div>
+                <div class="client-company">
+                    {% if client.company %}
+                        <i class="fas fa-building"></i> {{ client.company }}
+                    {% else %}
+                        <i class="fas fa-user"></i> Individual Client
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="client-card-body">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon email">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        {% if client.email %}
+                            <a href="mailto:{{ client.email }}">{{ client.email }}</a>
+                        {% else %}
+                            <span class="text-muted">No email provided</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon phone">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-text">
+                        {% if client.phone %}
+                            <a href="tel:{{ client.phone }}">{{ client.phone }}</a>
+                        {% else %}
+                            <span class="text-muted">No phone provided</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if client.company %}
+                <div class="contact-item">
+                    <div class="contact-icon company">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="contact-text">
+                        {{ client.company }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="client-card-footer">
+            <a href="{{ url_for('clients.edit_client', client_id=client.id) }}" class="action-btn btn-edit">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <form method="POST" action="{{ url_for('clients.delete_client', client_id=client.id) }}" style="display:inline;">
+                <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure? This action cannot be undone.')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-users fa-3x"></i>
+    <h3>No Clients Yet</h3>
+    <p>Start building your client base by adding your first client now.</p>
+    <a href="{{ url_for('clients.add_client') }}" class="btn-add-client">
+        <i class="fas fa-user-plus"></i> Add Your First Client
+    </a>
+</div>
+{% endif %}
+<script src="{{ url_for('static', filename='js/client_list.js') }}"></script>
+{% endblock %}

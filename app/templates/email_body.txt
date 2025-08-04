@@ -1,0 +1,9 @@
+Hello {{ invoice.client.name }},
+
+Please find attached your invoice #{{ invoice.id }} issued on {{ invoice.issue_date.strftime('%B %d, %Y') }}.
+
+Total Due: ${{ '{:,.2f}'.format(invoice.total_amount) }}
+Due Date: {{ invoice.due_date.strftime('%B %d, %Y') }}
+
+Thank you for your business!
+- Mini Invoice Team

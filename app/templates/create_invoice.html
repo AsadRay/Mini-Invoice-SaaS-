@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/create_invoice.css') }}" rel="stylesheet">
+
+<!-- Invoice Header -->
+<div class="invoice-header">
+    <div class="invoice-title">
+        <i class="fas fa-plus-circle"></i>
+        Create Invoice
+    </div>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+    <!-- Show validation errors -->
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <form method="POST" id="invoiceForm">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            {{ form.client_id.label }} 
+            {{ form.client_id(class="form-select") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.issue_date.label }} 
+            {{ form.issue_date(class="form-control") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.due_date.label }} 
+            {{ form.due_date(class="form-control") }}
+        </div>
+        
+        <h4>Line Items</h4>
+        
+        <div id="line-items">
+            {% for item_form in form.line_items %}
+            <div class="border p-3 mb-3">
+                <div class="mb-2">
+                    {{ item_form.form.description.label }} 
+                    {{ item_form.form.description(class="form-control") }}
+                </div>
+                <div class="mb-2">
+                    {{ item_form.form.quantity.label }} 
+                    {{ item_form.form.quantity(class="form-control") }}
+                </div>
+                <div class="mb-2">
+                    {{ item_form.form.unit_price.label }} 
+                    {{ item_form.form.unit_price(class="form-control") }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {{ form.submit(class="btn btn-success") }}
+    </form>
+</div>
+<script src="{{ url_for('static', filename='js/create_invoice.js') }}"></script>
+{% endblock %}

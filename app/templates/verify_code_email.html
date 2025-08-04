@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{ url_for('static', filename='css/verify_code_email.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code</title>
+ 
+</head>
+<body>
+    <div class="email-container">
+        <!-- Email Header -->
+        <div class="email-header">
+            <div class="email-logo">
+                📧
+            </div>
+            <h1 class="email-title">Verification Required</h1>
+            <p class="email-subtitle">Complete your account setup</p>
+        </div>
+
+        <!-- Email Content -->
+        <div class="email-content">
+            <p class="verification-message">
+                Thank you for signing up! To complete your registration and secure your account, 
+                please use the verification code below.
+            </p>
+
+            <!-- Verification Code -->
+            <div class="code-container">
+                <div class="code-decoration"></div>
+                <div class="code-label">Your Verification Code</div>
+                <h2 class="verification-code">{{ code }}</h2>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <div class="instructions-content">
+                    <h3>How to use this code:</h3>
+                    <p>Enter this code in the verification form to complete your registration and activate your account.</p>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="security-notice">
+                <div class="security-content">
+                    <h3>Security Notice</h3>
+                    <p>This code is valid for 15 minutes and should not be shared with anyone. If you didn't request this verification, please ignore this email.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Footer -->
+        <div class="email-footer">
+            <p class="footer-text">
+                Need help? Contact our support team or visit our help center.
+            </p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Support Center</a>
+                <a href="#" class="footer-link">Contact Us</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+            </div>
+            <p class="company-info">
+                © 2024 Mini Invoice SaaS. All rights reserved.<br>
+                This is an automated message, please do not reply to this email.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

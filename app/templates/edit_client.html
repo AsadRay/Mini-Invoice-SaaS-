@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/edit_client.css') }}" rel="stylesheet">
+
+<div class="form-container">
+    <!-- Form Header -->
+    <div class="form-header">
+        <div class="form-icon">
+            <i class="fas fa-user-edit"></i>
+        </div>
+        <h2 class="form-title">
+            Edit Client
+        </h2>
+        <p class="form-subtitle">Update client information and contact details</p>
+    </div>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <!-- Basic Information Section -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-user"></i>
+                Basic Information
+            </h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.name.label(class="form-label") }}
+                        <div class="input-group-custom">
+                            <i class="fas fa-user input-icon"></i>
+                            {{ form.name(class="form-control-custom input-with-icon", placeholder="Enter client's full name") }}
+                        </div>
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Enter the client's full legal name
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.company.label(class="form-label") }}
+                        <div class="input-group-custom">
+                            <i class="fas fa-building input-icon"></i>
+                            {{ form.company(class="form-control-custom input-with-icon", placeholder="Company or organization name") }}
+                        </div>
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Optional: Company or organization name
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-address-book"></i>
+                Contact Information
+            </h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.email.label(class="form-label") }}
+                        <div class="input-group-custom">
+                            <i class="fas fa-envelope input-icon"></i>
+                            {{ form.email(class="form-control-custom input-with-icon", placeholder="client@example.com", type="email") }}
+                        </div>
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Primary email for invoices and communication
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.phone.label(class="form-label") }}
+                        <div class="input-group-custom">
+                            <i class="fas fa-phone input-icon"></i>
+                            {{ form.phone(class="form-control-custom input-with-icon", placeholder="+1 (555) 123-4567", type="tel") }}
+                        </div>
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Contact phone number with country code
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information Section -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-sticky-note"></i>
+                Additional Information
+            </h3>
+            <div class="form-group">
+                {{ form.notes.label(class="form-label") }}
+                <div class="input-group-custom">
+                    {{ form.notes(class="form-control-custom textarea-custom", placeholder="Add any additional notes about this client...") }}
+                </div>
+                <div class="form-help-text">
+                    <i class="fas fa-info-circle"></i>
+                    Optional notes about payment terms, preferences, or special instructions
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <a href="{{ url_for('clients.list_clients') }}" class="btn-custom btn-secondary-custom">
+                <i class="fas fa-arrow-left"></i>
+                Cancel
+            </a>
+           {{ form.submit_btn(class="btn-custom btn-primary-custom") }}
+        </div>
+    </form>
+</div>
+
+{% endblock %}

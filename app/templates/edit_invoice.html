@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='css/edit_invoice.css') }}" rel="stylesheet">
+
+<!-- Invoice Header -->
+<div class="invoice-header">
+    <div class="invoice-title">
+        <i class="fas fa-edit"></i>
+        Edit Invoice
+    </div>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            {{ form.client_id.label }} 
+            {{ form.client_id(class="form-select") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.issue_date.label }} 
+            {{ form.issue_date(class="form-control") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.due_date.label }} 
+            {{ form.due_date(class="form-control") }}
+        </div>
+        
+        <h4>Line Items</h4>
+        
+        {% for item_form in form.line_items %}
+        <div class="border p-3 mb-3">
+            {{ item_form.form.description.label }} 
+            {{ item_form.form.description(class="form-control") }}
+            {{ item_form.form.quantity.label }} 
+            {{ item_form.form.quantity(class="form-control") }}
+            {{ item_form.form.unit_price.label }} 
+            {{ item_form.form.unit_price(class="form-control") }}
+        </div>
+        {% endfor %}
+        
+        {{ form.submit(class="btn btn-primary", value="Update Invoice") }}
+    </form>
+</div>
+{% endblock %}

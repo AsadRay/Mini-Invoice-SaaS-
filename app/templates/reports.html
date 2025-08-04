@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/reports.css') }}" rel="stylesheet">
+
+
+<!-- Header -->
+<div class="reports-header">
+    <div class="reports-title">
+        <i class="fas fa-chart-bar"></i>
+        Reports Dashboard
+    </div>
+    <p class="reports-subtitle">Comprehensive insights into your business performance</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="summary-card revenue">
+            <div class="card-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="card-value">${{ '{:,.2f}'.format(total_revenue) }}</div>
+            <div class="card-label">Total Revenue</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="summary-card monthly">
+            <div class="card-icon">
+                <i class="fas fa-calendar-month"></i>
+            </div>
+            <div class="card-value">${{ '{:,.2f}'.format(revenue_this_month) }}</div>
+            <div class="card-label">This Month</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="summary-card unpaid">
+            <div class="card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="card-value">{{ unpaid_count }}</div>
+            <div class="card-label">Unpaid Invoices</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="summary-card overdue">
+            <div class="card-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="card-value">{{ overdue_count }}</div>
+            <div class="card-label">Overdue</div>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice Status Visualization -->
+<div class="section-container">
+    <h4 class="section-title">
+        <i class="fas fa-chart-bar"></i>
+        Invoice Status Distribution
+    </h4>
+    <div class="chart-container">
+        <div class="status-bars-container">
+            <div class="status-bar paid" id="paidBar"></div>
+            <div class="status-bar unpaid" id="unpaidBar"></div>
+            <div class="status-bar overdue" id="overdueBar"></div>
+        </div>
+        <div class="chart-legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #10b981;"></div>
+                <div class="legend-label">Paid</div>
+                <div class="legend-value">{{ invoice_status_counts['paid'] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f59e0b;"></div>
+                <div class="legend-label">Unpaid</div>
+                <div class="legend-value">{{ invoice_status_counts['unpaid'] }}</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ef4444;"></div>
+                <div class="legend-label">Overdue</div>
+                <div class="legend-value">{{ invoice_status_counts['overdue'] }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Clients -->
+<div class="section-container">
+    <h4 class="section-title">
+        <i class="fas fa-users"></i>
+        Top Clients
+    </h4>
+    {% if top_clients %}
+    <ul class="client-list">
+        {% for name, total_paid in top_clients %}
+        <li class="client-item">
+            <div class="client-avatar">{{ name[0].upper() }}</div>
+            <div class="client-name">{{ name }}</div>
+            <div class="client-amount">${{ '{:,.2f}'.format(total_paid) }}</div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <p>No paid clients yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Monthly Summary Table -->
+<div class="section-container">
+    <h4 class="section-title">
+        <i class="fas fa-calendar-alt"></i>
+        Monthly Summary
+    </h4>
+    {% if monthly_summary %}
+    <div class="table-responsive">
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Total Invoices</th>
+                    <th>Paid</th>
+                    <th>Unpaid</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for month, total, revenue, paid, unpaid in monthly_summary %}
+                <tr>
+                    <td><strong>{{ month }}</strong></td>
+                    <td>{{ total }}</td>
+                    <td><span style="color: #10b981;">{{ paid }}</span></td>
+                    <td><span style="color: #f59e0b;">{{ unpaid }}</span></td>
+                    <td class="amount-cell">${{ '{:,.2f}'.format(revenue or 0) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <p>No invoices issued yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Invoice Status Summary -->
+<div class="section-container">
+    <h4 class="section-title">
+        <i class="fas fa-flag"></i>
+        Invoice Status Summary
+    </h4>
+    <div class="status-item paid">
+        <div class="status-label">
+            <i class="fas fa-check-circle"></i>
+            Paid
+        </div>
+        <div class="status-badge">{{ invoice_status_counts['paid'] }}</div>
+    </div>
+    <div class="status-item unpaid">
+        <div class="status-label">
+            <i class="fas fa-clock"></i>
+            Unpaid
+        </div>
+        <div class="status-badge">{{ invoice_status_counts['unpaid'] }}</div>
+    </div>
+    <div class="status-item overdue">
+        <div class="status-label">
+            <i class="fas fa-exclamation-triangle"></i>
+            Overdue
+        </div>
+        <div class="status-badge">{{ invoice_status_counts['overdue'] }}</div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+
+{% endblock %}

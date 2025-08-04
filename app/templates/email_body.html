@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice #{{ invoice.id }}</title>
+</head>
+<body>
+  <h2>Hello {{ invoice.client.name }},</h2>
+  <p>Please find attached your invoice <strong>#{{ invoice.id }}</strong> issued on {{ invoice.issue_date.strftime('%B %d, %Y') }}.</p>
+
+  <p><strong>Total Due:</strong> ${{ '{:,.2f}'.format(invoice.total_amount) }}</p>
+  <p><strong>Due Date:</strong> {{ invoice.due_date.strftime('%B %d, %Y') }}</p>
+
+  <p>Thank you for your business!</p>
+  <p>- Mini Invoice Team</p>
+</body>
+</html>

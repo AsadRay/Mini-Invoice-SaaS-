@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
+
+<!-- Login Header -->
+<div class="login-header">
+    <div class="login-title">
+        <i class="fas fa-sign-in-alt"></i>
+        Login
+    </div>
+    <p class="login-subtitle">Welcome back to your account</p>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+    <div class="form-icon">
+        <i class="fas fa-user"></i>
+    </div>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            {{ form.email.label }} 
+            {{ form.email(class="form-control", placeholder="Enter your email address") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.password.label }} 
+            {{ form.password(class="form-control", placeholder="Enter your password") }}
+        </div>
+        
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+<!-- Register Link -->
+<div class="register-link">
+    <p class="mt-3">Don't have an account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+</div>
+
+{% endblock %}

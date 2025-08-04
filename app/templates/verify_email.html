@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/verify_email.css') }}" rel="stylesheet">
+
+<!-- Settings Header -->
+<div class="settings-header">
+    <div class="settings-title">
+        <i class="fas fa-cog"></i>
+        Settings
+    </div>
+    <p class="settings-subtitle">Configure your application settings</p>
+</div>
+
+<!-- Settings Information -->
+<div class="settings-info">
+    <div class="settings-info-content">
+        <h4>Configuration Code</h4>
+        <p>Enter your configuration code to update system settings. This code should be provided by your administrator or obtained from your account dashboard.</p>
+    </div>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+    <div class="form-icon">
+        <i class="fas fa-key"></i>
+    </div>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.code.label }}
+            {{ form.code(class="form-control", placeholder="Enter configuration code...") }}
+            <div class="form-help-text">
+                This code will be used to update your system configuration securely.
+            </div>
+        </div>
+        
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+{% endblock %}

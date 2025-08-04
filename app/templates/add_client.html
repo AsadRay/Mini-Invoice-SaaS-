@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='css/add_client.css') }}" rel="stylesheet">
+
+
+<!-- Client Header -->
+<div class="client-header">
+    <div class="client-title">
+        <i class="fas fa-user-plus"></i>
+        Add New Client
+    </div>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.name.label }} 
+            {{ form.name(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label }} 
+            {{ form.email(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.phone.label }} 
+            {{ form.phone(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.company.label }} 
+            {{ form.company(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.notes.label }} 
+            {{ form.notes(class="form-control") }}
+        </div>
+        
+        {{ form.submit_btn(class="btn btn-primary") }}
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/add_client.js') }}"></script>
+
+{% endblock %}

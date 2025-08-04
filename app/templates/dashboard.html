@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="dashboard-title">
+        <i class="fas fa-chart-line"></i>
+        Dashboard Overview
+    </div>
+    <p class="dashboard-subtitle">Welcome back! Here's what's happening with your business today.</p>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="fas fa-bolt"></i>
+            Quick Actions
+        </h4>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="{{ url_for('invoices.create_invoice') }}" class="quick-action-btn">
+                <div class="quick-action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="quick-action-label">Create Invoice</div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="{{ url_for('clients.add_client') }}" class="quick-action-btn">
+                <div class="quick-action-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="quick-action-label">Add Client</div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="{{ url_for('invoices.list_invoices') }}" class="quick-action-btn">
+                <div class="quick-action-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="quick-action-label">View All Invoices</div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="{{ url_for('dashboard.reports') }}" class="quick-action-btn">
+                <div class="quick-action-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="quick-action-label">Reports</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card clients">
+            <div class="stats-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stats-number">{{ total_clients }}</div>
+            <div class="stats-label">Total Clients</div>
+            <div class="stats-change positive">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card invoices">
+            <div class="stats-icon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="stats-number">{{ total_invoices }}</div>
+            <div class="stats-label">Total Invoices</div>
+            <div class="stats-change positive">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card paid">
+            <div class="stats-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stats-number">{{ paid_invoices }}</div>
+            <div class="stats-label">Paid Invoices</div>
+            <div class="stats-change positive">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card unpaid">
+            <div class="stats-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stats-number">{{ unpaid_invoices }}</div>
+            <div class="stats-label">Unpaid Invoices</div>
+            <div class="stats-change negative">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Invoices Section -->
+<div class="section-header">
+    <h4 class="section-title">
+        <i class="fas fa-file-invoice-dollar"></i>
+        Recent Invoices
+    </h4>
+    <div class="section-actions">
+        <button class="btn-custom btn-outline-custom" onclick="refreshInvoices()">
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+        </button>
+        <a href="{{ url_for('invoices.list_invoices') }}" class="btn-custom btn-primary-custom">
+            <i class="fas fa-eye"></i>
+            View All
+        </a>
+    </div>
+</div>
+
+<div class="invoice-cards-container">
+    {% if recent_invoices %}
+        {% for invoice in recent_invoices %}
+        <div class="invoice-card" data-href="{{ url_for('invoices.view_invoice', invoice_id=invoice.id) }}" style="cursor: pointer;">
+            <div class="invoice-card-header">
+                <div class="invoice-card-left">
+                    <span class="invoice-id">#{{ invoice.id }}</span>
+                    <div class="client-info">
+                        <div class="client-avatar">
+                            {{ invoice.client.name[0].upper() }}
+                        </div>
+                        <span class="client-name">{{ invoice.client.name }}</span>
+                    </div>
+                </div>
+                <div class="invoice-card-right">
+                    <div class="invoice-amount">
+                        ${{ '{:,.2f}'.format(invoice.total_amount) }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="invoice-card-body">
+                <div class="invoice-dates">
+                    <div class="date-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Issued: {{ invoice.issue_date.strftime('%b %d, %Y') }}</span>
+                    </div>
+                    <div class="date-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Due: {{ invoice.due_date.strftime('%b %d, %Y') }}</span>
+                    </div>
+                </div>
+                
+                <div class="status-and-actions">
+                    {% if invoice.status.lower() == 'paid' %}
+                        <span class="status-badge status-paid">
+                            <i class="fas fa-check-circle"></i>
+                            Paid
+                        </span>
+                    {% elif invoice.status.lower() == 'unpaid' %}
+                        <span class="status-badge status-unpaid">
+                            <i class="fas fa-times-circle"></i>
+                            Unpaid
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-pending">
+                            <i class="fas fa-clock"></i>
+                            {{ invoice.status|capitalize }}
+                        </span>
+                    {% endif %}
+                    
+                    <div class="invoice-actions">
+                        <!-- View Button -->
+                        <a href="{{ url_for('invoices.view_invoice', invoice_id=invoice.id) }}" 
+                           class="action-btn view" title="View Invoice">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        
+                        <!-- Edit Button -->
+                        <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" 
+                           class="action-btn edit" title="Edit Invoice">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        
+                        <!-- Send Reminder Button -->
+                        {% if invoice.status.lower() != 'paid' %}
+                            <form method="POST" action="{{ url_for('dashboard.send_reminder', invoice_id=invoice.id) }}" style="display:inline;">
+                                {% if csrf_token %}{{ csrf_token() }}{% endif %}
+                                <button type="submit" class="action-btn reminder" title="Send Reminder">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <h5>No Recent Invoices</h5>
+            <p>You haven't created any invoices yet. Get started by creating your first invoice!</p>
+            <a href="{{ url_for('invoices.create_invoice') }}" class="btn-custom btn-primary-custom mt-3">
+                <i class="fas fa-plus"></i>
+                Create Your First Invoice
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}
