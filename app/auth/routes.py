@@ -1,13 +1,16 @@
 import random
-from flask import render_template, redirect, url_for, flash, request, session
+from flask import render_template, redirect, url_for, flash, request, session 
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth
-from .forms import RegisterForm, LoginForm, VerificationForm  # You need to create VerificationForm
+from .forms import RegisterForm, LoginForm, VerificationForm, ForgotPasswordForm, ResetPasswordForm  
 from app.models import User
 from app import db
 from sqlalchemy.exc import IntegrityError
 from app.email import send_email
-import os
+import os , secrets
+from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash
+
 
 @auth.route('/')
 def home():
@@ -36,7 +39,7 @@ def register():
         # Send the code to email
         send_email(
             subject="Email Verification Code",
-            sender=os.getenv("MAIL_DEFAULT_SENDER"),
+            sender=os.getenv("MAIL_USERNAME"),
             recipients=[email],
             text_body=f"Your verification code is: {code}",
             html_body=render_template('verify_code_email.html', code=code)
@@ -74,6 +77,78 @@ def verify_email():
             return redirect(url_for('auth.register'))
 
     return render_template('verify_email.html', form=form)
+
+
+@auth.route('/resend-code')
+def resend_code():
+    reg_data = session.get('reg_data')
+    if not reg_data:
+        flash('No registration data found. Please register again.', 'danger')
+        return redirect(url_for('auth.register'))
+
+    # Generate new code
+    code = str(random.randint(100000, 999999))
+    session['verification_code'] = code
+
+    # Resend the code to email
+    send_email(
+        subject="Email Verification Code",
+        sender=os.getenv("MAIL_USERNAME"),
+        recipients=[reg_data['email']],
+        text_body=f"Your verification code is: {code}",
+        html_body=render_template('verify_code_email.html', code=code)
+    )
+
+    flash('Verification code resent to your email.', 'info')
+    return redirect(url_for('auth.verify_email'))
+
+
+@auth.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            # Generate a unique token for password reset
+            token = secrets.token_urlsafe(32)
+            user.reset_token = token
+            user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
+            db.session.commit()
+
+            # Send reset email
+            send_email(
+                subject="Password Reset Request",
+                sender=os.getenv("MAIL_USERNAME"),
+                recipients=[user.email],
+                text_body=f"Click the link to reset your password: {url_for('auth.reset_password', token=token, _external=True)}",
+                html_body=render_template('reset_password_email.html', token=token)
+            )
+
+            flash('Password reset instructions sent to your email.', 'info')
+        else:
+            flash('Email not found.', 'danger')
+    return render_template('forgot_password.html', form=form)
+
+
+@auth.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.query.filter_by(reset_token=token).first()
+
+    # Validate token
+    if not user or user.reset_token_expires < datetime.utcnow():
+        flash('Invalid or expired reset link. Please try again.', 'danger')
+        return redirect(url_for('auth.forgot_password'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.password = generate_password_hash(form.password.data)
+        user.reset_token = None
+        user.reset_token_expires = None
+        db.session.commit()
+        flash('Your password has been reset. Please log in.', 'success')
+        return redirect(url_for('auth.login'))
+
+    return render_template('reset_password.html', form=form)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():

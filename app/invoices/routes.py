@@ -132,7 +132,7 @@ def email_invoice(invoice_id):
 
     send_email(
         subject=f"Invoice #{invoice.id}",
-        sender=os.getenv('MAIL_DEFAULT_SENDER'),
+        sender=os.getenv('MAIL_USERNAME'),
         recipients=[invoice.client.email],
         text_body=text_body,
         html_body=html_body,

@@ -6,70 +6,77 @@
 <!-- Settings Header -->
 <div class="settings-header">
     <div class="settings-title">
-        <i class="fas fa-cog"></i>
-        Settings
+        <i class="fas fa-envelope"></i>
+        Resend Verification Code
     </div>
-    <p class="settings-subtitle">Configure your application settings</p>
+    <p class="settings-subtitle">Request a new verification code to your email</p>
 </div>
 
-<!-- Settings Information -->
+<!-- Info Banner -->
 <div class="settings-info">
     <div class="settings-info-content">
-        <h4>Configuration Code</h4>
-        <p>Enter your configuration code to update system settings. This code should be provided by your administrator or obtained from your account dashboard.</p>
+        <h4>Need a new code?</h4>
+        <p>Click the button below to resend a new verification code to your registered email address. The new code will replace any previously sent code.</p>
     </div>
 </div>
 
 <!-- Form Container -->
 <div class="form-container">
     <div class="form-icon">
-        <i class="fas fa-key"></i>
+        <i class="fas fa-envelope-open-text"></i>
     </div>
-    
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        
-        <div class="form-group">
-            {{ form.code.label }}
-            {{ form.code(class="form-control", placeholder="Enter configuration code...") }}
-            <div class="form-help-text">
-                This code will be used to update your system configuration securely.
-            </div>
-        </div>
 
-        <!-- Buttons Row -->
-       <div class="buttons-row">
-    {{ form.submit(class="btn btn-primary") }}
-    <a href="{{ url_for('auth.resend_code') }}" id="resendBtn" class="btn btn-primary">
-        <i class="fas fa-paper-plane me-1"></i> Resend OTP
-    </a>
-</div>
+    <p class="resend-description">
+        Didn't receive your verification code? Click below and we'll send a new one to your email.
+    </p>
 
-        <!-- Countdown -->
-        <p id="countdown" class="countdown-timer" style="display:none;">
-            Please wait <span id="timer">60</span>s before requesting again.
-        </p>
-    </form>
+    <div class="buttons-row">
+        <a href="{{ url_for('auth.resend_code') }}" id="resendBtn" class="btn btn-primary w-100">
+            <i class="fas fa-paper-plane me-2"></i> Resend Verification Code
+        </a>
+    </div>
+
+    <p id="countdown" class="countdown-timer" style="display:none;">
+        Please wait <span id="timer">60</span>s before requesting again.
+    </p>
+
+    <div class="mt-3 text-center">
+        <a href="{{ url_for('auth.verify_email') }}" class="back-link">
+            <i class="fas fa-arrow-left me-1"></i> Back to Verification
+        </a>
+    </div>
 </div>
 
 <style>
+    .resend-description {
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
     .buttons-row {
         display: flex;
         gap: 0.75rem;
         align-items: center;
-        margin-top: 0.5rem;
-    }
-
-    .buttons-row .btn {
-        flex: 1;
     }
 
     .countdown-timer {
         text-align: center;
         color: #adb5bd;
-        font-size: 0.85rem;
-        margin-top: 0.6rem;
-        margin-bottom: 0;
+        font-size: 0.88rem;
+        margin-top: 0.75rem;
+    }
+
+    .back-link {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #4f46e5;
     }
 </style>
 

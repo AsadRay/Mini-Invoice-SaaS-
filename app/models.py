@@ -11,6 +11,9 @@ class User(UserMixin, db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     verification_code = db.Column(db.String(6), nullable=True)
 
+    reset_token = db.Column(db.String(100), nullable=True)
+    reset_token_expires = db.Column(db.DateTime, nullable=True)
+
     # Relationships
     clients = db.relationship('Client', backref='user', lazy=True)
     invoices = db.relationship('Invoice', backref='user', lazy=True)
